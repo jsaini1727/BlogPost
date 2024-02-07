@@ -1,60 +1,54 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../db/connection');
 const { hash, compare} = require('bcrypt');
-const Blog = require('./Blog');
 const BlogPost = require('./Blog');
 
 
 class User extends Model {
-    toJSON(){
-        const user = Object.assign({}, this.get);
-        delete user.password;
-        return user;
-    }
-    async validatePass(formPassword){
-        const is_valid = await compare(formPassword, this.password);
+     validatePass(formPassword){
+        const is_valid =  compare(formPassword, this.password);
         return is_valid;
     }
  }
 
 User.init({
+    id:{
+        type: DataTypes.INTEGER,
+        allowNull:false,
+        primaryKey: true,
+        autoIncrement: true
+    },
     username: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: {
-            args: true,
-            msg: 'That username already exists'
-
-        }
+        unique: true
     },
-    email: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        unique:{
-            arg: true,
-            msg: 'A user with that email already exists'
-        },
-        validate: {
-            isEmail: {
-                args: true,
-                msg: 'You must provide a valid email address'
-            }
-        }
-    },
+    // email: {
+    //     type: DataTypes.STRING,
+    //     allowNull: false,
+    //     unique:{
+    //         arg: true,
+    //         msg: 'A user with that email already exists'
+    //     },
+    //     validate: {
+    //         isEmail: {
+    //             args: true,
+    //             msg: 'You must provide a valid email address'
+    //         }
+    //     }
+    // },
     password:{
         type:DataTypes.STRING,
         allowNull: false,
         validate: {
-            len: {
-                args: 6,
-                msg: 'Your password must be atleast 6 characters in length.'
-            }
+            len: [6]
         }
     },
     
 }, {
     sequelize,
     modelName: 'user',
+    underscored: true,
     hooks: {
         async beforeCreate(user){
             user.password = await hash(user.password, 10);

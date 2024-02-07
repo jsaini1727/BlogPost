@@ -4,27 +4,25 @@ const sequelize = require('../db/connection');
 class BlogPost extends Model { }
 
 BlogPost.init({
+    id:{
+        type: DataTypes.INTEGER,
+        allowNull:false,
+        primaryKey: true,
+        autoIncrement: true
+    },
     title: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: true,
     },
-    author:{
-        type:DataTypes.STRING,
-        allowNull: false,
-    },
-    createdOn: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false
-    }
+
 
 }, {
     sequelize,
     modelName: 'blogPost'
 });
 
-module.exports = Blog
+module.exports = BlogPost
